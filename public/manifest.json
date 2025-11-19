@@ -1,0 +1,14 @@
+{
+    "version": "next",
+    "imageUrl": "https://placehold.co/600x400/0052FF/ffffff?text=Basecaster",
+    "button": {
+        "title": "Play Basecaster",
+        "action": {
+            "type": "launch_frame",
+            "name": "Basecaster",
+            "url": "https://basecaster-demo.vercel.app",
+            "splashImageUrl": "https://placehold.co/200x200/0052FF/ffffff?text=Icon",
+            "splashBackgroundColor": "#0a0a0a"
+        }
+    }
+}
