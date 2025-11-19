@@ -6,7 +6,7 @@
         "action": {
             "type": "launch_frame",
             "name": "Basecaster",
-            "url": "https://basecaster-demo.vercel.app",
+            "url": "https://base-caster-ebon.vercel.app",
             "splashImageUrl": "https://placehold.co/200x200/0052FF/ffffff?text=Icon",
             "splashBackgroundColor": "#0a0a0a"
         }

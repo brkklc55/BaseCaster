@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 
-
 const BASE_ENERGY = 1000;
 const REGEN_RATE = 1;
 const STORAGE_KEY = 'basecaster_save_v2';
@@ -11,7 +10,11 @@ interface GameState {
     energy: number;
     multitapLevel: number;
     energyLimitLevel: number;
-    lastUpdated: number;
+    lastSaveTime: number;
+    username?: string | null;
+    walletAddress?: string | null;
+    // Legacy
+    lastUpdated?: number;
 }
 
 export const UPGRADE_COSTS = {
@@ -26,9 +29,11 @@ export const useGameLogic = () => {
     const [multitapLevel, setMultitapLevel] = useState(0);
     const [energyLimitLevel, setEnergyLimitLevel] = useState(0);
     const [isLoaded, setIsLoaded] = useState(false);
+    const [username, setUsername] = useState<string | null>(null);
+    const [walletAddress, setWalletAddress] = useState<string | null>(null);
 
     const maxEnergy = BASE_ENERGY + (energyLimitLevel * 500);
-    const clickPower = 1 + multitapLevel;
+    const clickPower = 1 + multitapLevel * 2;
 
     // Load game state
     useEffect(() => {
@@ -36,18 +41,20 @@ export const useGameLogic = () => {
         if (saved) {
             try {
                 const parsed: GameState = JSON.parse(saved);
-                setScore(parsed.score);
-                setTotalScore(parsed.totalScore || parsed.score); // Backwards compatibility
+                setScore(parsed.score || 0);
+                setTotalScore(parsed.totalScore || parsed.score || 0);
                 setMultitapLevel(parsed.multitapLevel || 0);
                 setEnergyLimitLevel(parsed.energyLimitLevel || 0);
+                setUsername(parsed.username || null);
+                setWalletAddress(parsed.walletAddress || null);
 
-                // Recalculate max energy based on loaded level
+                // Calculate offline energy regen
+                const lastTime = parsed.lastSaveTime || parsed.lastUpdated || Date.now();
+                const elapsedSeconds = (Date.now() - lastTime) / 1000;
                 const currentMaxEnergy = BASE_ENERGY + ((parsed.energyLimitLevel || 0) * 500);
-
-                const now = Date.now();
-                const elapsedSeconds = Math.floor((now - parsed.lastUpdated) / 1000);
                 const regenerated = elapsedSeconds * REGEN_RATE;
-                setEnergy(Math.min(currentMaxEnergy, parsed.energy + regenerated));
+
+                setEnergy(Math.min(currentMaxEnergy, (parsed.energy || 0) + regenerated));
             } catch (e) {
                 console.error('Failed to load save', e);
             }
@@ -59,11 +66,9 @@ export const useGameLogic = () => {
         const hasClaimedRef = localStorage.getItem('basecaster_ref_claimed');
 
         if (refId && !hasClaimedRef) {
-            // Award 10k bonus
             setScore(s => s + 10000);
             setTotalScore(s => s + 10000);
             localStorage.setItem('basecaster_ref_claimed', 'true');
-            // Clean URL
             window.history.replaceState({}, '', window.location.pathname);
             alert("🎉 Welcome! You received 10,000 $BC referral bonus!");
         }
@@ -76,11 +81,17 @@ export const useGameLogic = () => {
         if (!isLoaded) return;
 
         const interval = setInterval(() => {
-            setEnergy((prev) => Math.min(maxEnergy, prev + REGEN_RATE));
+            setEnergy(prev => {
+                const currentMax = BASE_ENERGY + energyLimitLevel * 500;
+                if (prev < currentMax) {
+                    return Math.min(currentMax, prev + REGEN_RATE);
+                }
+                return prev;
+            });
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [isLoaded, maxEnergy]);
+    }, [energyLimitLevel, isLoaded]);
 
     // Persistence
     useEffect(() => {
@@ -92,10 +103,12 @@ export const useGameLogic = () => {
             energy,
             multitapLevel,
             energyLimitLevel,
-            lastUpdated: Date.now(),
+            username,
+            walletAddress,
+            lastSaveTime: Date.now(),
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }, [score, totalScore, energy, multitapLevel, energyLimitLevel, isLoaded]);
+    }, [score, totalScore, energy, multitapLevel, energyLimitLevel, isLoaded, username, walletAddress]);
 
     const handleClick = useCallback(() => {
         if (energy >= clickPower) {
@@ -108,20 +121,18 @@ export const useGameLogic = () => {
     }, [energy, clickPower]);
 
     const buyUpgrade = (type: 'multitap' | 'energyLimit') => {
-        if (type === 'multitap') {
-            const cost = UPGRADE_COSTS.multitap(multitapLevel);
-            if (score >= cost) {
-                setScore(s => s - cost);
+        const cost = type === 'multitap'
+            ? UPGRADE_COSTS.multitap(multitapLevel)
+            : UPGRADE_COSTS.energyLimit(energyLimitLevel);
+
+        if (score >= cost) {
+            setScore(s => s - cost);
+            if (type === 'multitap') {
                 setMultitapLevel(l => l + 1);
-                return true;
-            }
-        } else if (type === 'energyLimit') {
-            const cost = UPGRADE_COSTS.energyLimit(energyLimitLevel);
-            if (score >= cost) {
-                setScore(s => s - cost);
+            } else {
                 setEnergyLimitLevel(l => l + 1);
-                return true;
             }
+            return true;
         }
         return false;
     };
@@ -129,6 +140,11 @@ export const useGameLogic = () => {
     const addReward = (amount: number) => {
         setScore(s => s + amount);
         setTotalScore(s => s + amount);
+    };
+
+    const setProfile = (name: string, wallet: string) => {
+        setUsername(name);
+        setWalletAddress(wallet);
     };
 
     return {
@@ -141,6 +157,9 @@ export const useGameLogic = () => {
         energyLimitLevel,
         incrementScore: handleClick,
         buyUpgrade,
-        addReward
+        addReward,
+        username,
+        walletAddress,
+        setProfile
     };
 };

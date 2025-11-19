@@ -2,14 +2,14 @@ import React from 'react';
 import { UPGRADE_COSTS } from '../hooks/useGameLogic';
 
 interface ShopProps {
+    onClose: () => void;
     score: number;
     multitapLevel: number;
     energyLimitLevel: number;
-    onBuy: (type: 'multitap' | 'energyLimit') => boolean;
-    onClose: () => void;
+    buyUpgrade: (type: 'multitap' | 'energyLimit') => boolean;
 }
 
-export const Shop: React.FC<ShopProps> = ({ score, multitapLevel, energyLimitLevel, onBuy, onClose }) => {
+export const Shop: React.FC<ShopProps> = ({ onClose, score, multitapLevel, energyLimitLevel, buyUpgrade }) => {
     const multitapCost = UPGRADE_COSTS.multitap(multitapLevel);
     const energyLimitCost = UPGRADE_COSTS.energyLimit(energyLimitLevel);
 
@@ -24,7 +24,7 @@ export const Shop: React.FC<ShopProps> = ({ score, multitapLevel, energyLimitLev
                 <div className="shop-items">
                     <div
                         className={`shop-item ${score >= multitapCost ? '' : 'disabled'}`}
-                        onClick={() => onBuy('multitap')}
+                        onClick={() => buyUpgrade('multitap')}
                     >
                         <div className="item-icon">👆</div>
                         <div className="item-details">
@@ -39,7 +39,7 @@ export const Shop: React.FC<ShopProps> = ({ score, multitapLevel, energyLimitLev
 
                     <div
                         className={`shop-item ${score >= energyLimitCost ? '' : 'disabled'}`}
-                        onClick={() => onBuy('energyLimit')}
+                        onClick={() => buyUpgrade('energyLimit')}
                     >
                         <div className="item-icon">🔋</div>
                         <div className="item-details">

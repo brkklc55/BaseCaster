@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import './App.css';
 import { useGameLogic } from './hooks/useGameLogic';
 import { Stats } from './components/Stats';
 import { Clicker } from './components/Clicker';
@@ -6,67 +7,73 @@ import { Shop } from './components/Shop';
 import { Leaderboard } from './components/Leaderboard';
 import { Tasks } from './components/Tasks';
 import { Friends } from './components/Friends';
+import { Welcome } from './components/Welcome';
 
 function App() {
   const {
     score,
+    totalScore,
     energy,
     maxEnergy,
     incrementScore,
     multitapLevel,
     energyLimitLevel,
     buyUpgrade,
-    totalScore,
-    addReward // Need to expose this from hook
+    addReward,
+    username,
+    setProfile
   } = useGameLogic();
 
   const [activeModal, setActiveModal] = useState<'shop' | 'leaderboard' | 'tasks' | 'friends' | null>(null);
 
-  return (
-    <div className="container">
-      <h1>Basecaster</h1>
+  // Show Welcome screen if no username
+  if (!username) {
+    return <Welcome onComplete={setProfile} />;
+  }
 
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '100%' }}>
+  return (
+    <div className="app-container">
+      <div className="header">
+        <div className="profile-info">
+          <span className="username">{username}</span>
+        </div>
+      </div>
+
+      <Stats score={score} energy={energy} maxEnergy={maxEnergy} />
+
+      <div className="game-area">
         <Clicker onClick={incrementScore} />
       </div>
 
-      <div style={{ width: '100%' }}>
-        <Stats score={score} energy={energy} maxEnergy={maxEnergy} />
-
-        <div className="menu-buttons">
-          <button className="menu-btn" onClick={() => setActiveModal('shop')}>
-            🚀 Boosts
-          </button>
-          <button className="menu-btn" onClick={() => setActiveModal('tasks')}>
-            📋 Tasks
-          </button>
-          <button className="menu-btn" onClick={() => setActiveModal('friends')}>
-            👥 Friends
-          </button>
-          <button className="menu-btn" onClick={() => setActiveModal('leaderboard')}>
-            🏆 Top
-          </button>
-        </div>
+      <div className="menu-bar">
+        <button onClick={() => setActiveModal('shop')}>🛒 Shop</button>
+        <button onClick={() => setActiveModal('tasks')}>📋 Tasks</button>
+        <button onClick={() => setActiveModal('friends')}>👥 Friends</button>
+        <button onClick={() => setActiveModal('leaderboard')}>🏆 Rank</button>
       </div>
 
       {activeModal === 'shop' && (
         <Shop
+          onClose={() => setActiveModal(null)}
           score={score}
           multitapLevel={multitapLevel}
           energyLimitLevel={energyLimitLevel}
-          onBuy={buyUpgrade}
-          onClose={() => setActiveModal(null)}
+          buyUpgrade={buyUpgrade}
         />
       )}
 
       {activeModal === 'leaderboard' && (
-        <Leaderboard currentScore={totalScore} onClose={() => setActiveModal(null)} />
+        <Leaderboard
+          onClose={() => setActiveModal(null)}
+          currentScore={totalScore}
+          username={username}
+        />
       )}
 
       {activeModal === 'tasks' && (
         <Tasks
           onClose={() => setActiveModal(null)}
-          onReward={addReward}
+          addReward={addReward}
         />
       )}
 

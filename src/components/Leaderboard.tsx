@@ -8,23 +8,18 @@ interface Player {
 }
 
 interface LeaderboardProps {
-    currentScore: number;
     onClose: () => void;
+    currentScore: number;
+    username: string;
 }
 
-const MOCK_DATA: Player[] = [
-    { id: '1', name: 'dwr.eth', score: 1542039 },
-    { id: '2', name: 'vbuterin', score: 1203942 },
-    { id: '3', name: 'jesse.xyz', score: 982103 },
-    { id: '4', name: 'base.eth', score: 854021 },
-    { id: '5', name: 'zora', score: 723102 },
-];
+const MOCK_DATA: Player[] = [];
 
-export const Leaderboard: React.FC<LeaderboardProps> = ({ currentScore, onClose }) => {
+export const Leaderboard: React.FC<LeaderboardProps> = ({ onClose, currentScore, username }) => {
     // Merge current user into list
     const allPlayers = [
         ...MOCK_DATA,
-        { id: 'user', name: 'You', score: currentScore, isUser: true }
+        { id: 'user', name: username, score: currentScore, isUser: true }
     ].sort((a, b) => b.score - a.score); // Sort descending
 
     return (
