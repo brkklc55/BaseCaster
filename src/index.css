@@ -48,16 +48,24 @@ body {
   width: 100%;
   max-width: 480px;
   /* Mobile constraint */
-  height: 100vh;
   height: 100dvh;
-  /* Dynamic viewport height for mobile */
+  max-height: 900px;
+  /* Prevent too tall on desktop */
+
   display: flex;
   flex-direction: column;
+
+  /* Safe area padding */
   padding: 20px;
+  padding-top: max(20px, env(safe-area-inset-top));
+  padding-bottom: max(20px, env(safe-area-inset-bottom));
+
   box-sizing: border-box;
   position: relative;
   background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%);
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  /* Prevent scroll */
 }
 
 .container {
@@ -492,4 +500,30 @@ h1 {
   font-weight: 600;
   color: white;
   font-size: 14px;
+}
+
+/* Responsive Adjustments */
+@media (max-height: 700px) {
+  .score-display {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .clicker-container {
+    width: 220px;
+    height: 220px;
+  }
+
+  .coin {
+    font-size: 4rem;
+  }
+
+  .container {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .menu-buttons {
+    margin-top: 0.5rem;
+  }
 }
