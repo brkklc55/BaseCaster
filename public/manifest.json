@@ -3,9 +3,9 @@
     "imageUrl": "https://placehold.co/600x400/0052FF/ffffff.png?text=Basecaster",
     "icons": [
         {
-            "src": "/icon.svg",
+            "src": "https://placehold.co/512x512/0052FF/ffffff.png?text=BC",
             "sizes": "512x512",
-            "type": "image/svg+xml"
+            "type": "image/png"
         }
     ],
     "button": {
@@ -14,7 +14,7 @@
             "type": "launch_frame",
             "name": "Basecaster",
             "url": "https://base-caster-ebon.vercel.app",
-            "splashImageUrl": "https://base-caster-ebon.vercel.app/icon.svg",
+            "splashImageUrl": "https://placehold.co/200x200/0052FF/ffffff.png?text=BC",
             "splashBackgroundColor": "#0a0a0a"
         }
     },
@@ -24,6 +24,6 @@
         "homeUrl": "https://base-caster-ebon.vercel.app",
         "imageUrl": "https://placehold.co/600x400/0052FF/ffffff.png?text=Basecaster",
         "buttonTitle": "Play Basecaster",
-        "splashImageUrl": "https://base-caster-ebon.vercel.app/icon.svg"
+        "splashImageUrl": "https://placehold.co/200x200/0052FF/ffffff.png?text=BC"
     }
 }
