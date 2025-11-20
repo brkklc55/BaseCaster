@@ -96,36 +96,44 @@ body {
   }
 }
 
-.container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  gap: 2rem;
-}
+/* PC Layout (Simulate Mobile) */
+@media (min-width: 481px) {
+  #root {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+  }
 
-/* Typography */
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-  margin: 0;
-  background: linear-gradient(to bottom right, #fff, #ccc);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-align: center;
+  .app-container {
+    width: 500px;
+    /* Increased from 420px */
+    height: 90vh;
+    /* Taller */
+    max-height: 900px;
+    border-radius: 40px;
+    /* Rounder */
+    border: 12px solid #222;
+    /* Thicker bezel */
+    box-shadow:
+      0 0 0 2px #333,
+      0 20px 50px rgba(0, 82, 255, 0.3);
+    /* Blue glow */
+    position: relative;
+    overflow: hidden;
+  }
 }
 
 /* Layout Structure */
 .header {
   flex-shrink: 0;
+  padding-top: 10px;
 }
 
 .stats-container {
   flex-shrink: 0;
-  padding: 0 1rem;
+  padding: 0 1.5rem;
   width: 100%;
   box-sizing: border-box;
 }
@@ -145,19 +153,37 @@ h1 {
 .menu-bar {
   flex-shrink: 0;
   width: 100%;
-  padding: 0 1rem 1rem 1rem;
+  padding: 0 1.5rem 1.5rem 1.5rem;
   box-sizing: border-box;
   z-index: 50;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  /* Fade out at bottom */
+}
+
+/* Typography */
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+  margin: 0;
+  background: linear-gradient(to bottom right, #fff, #ccc);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
 }
 
 /* Stats Elements */
 .score-display {
-  font-size: 3.5rem;
-  font-weight: 800;
+  font-size: 4.5rem;
+  font-weight: 900;
   text-align: center;
   margin-bottom: 0.5rem;
-  text-shadow: 0 0 20px var(--primary-glow);
+  background: linear-gradient(to bottom, #fff, #ccc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 20px rgba(0, 82, 255, 0.5));
   line-height: 1;
+  letter-spacing: -2px;
 }
 
 /* Clicker Button */
@@ -236,40 +262,72 @@ h1 {
 /* Stats Bar */
 .stats-bar {
   width: 100%;
-  background: var(--bg-card);
-  padding: 0.8rem;
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  padding: 1rem;
+  border-radius: 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .energy-container {
   flex: 1;
-  margin-left: 0.5rem;
+  margin-left: 1rem;
 }
 
 .energy-text {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  margin-bottom: 0.3rem;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 0.5rem;
   display: flex;
   justify-content: space-between;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .progress-bar {
   width: 100%;
-  height: 10px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
+  height: 16px;
+  /* Thicker */
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
   overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--primary), #4da6ff);
-  box-shadow: 0 0 10px var(--primary-glow);
+  background: linear-gradient(90deg, #0052FF, #4da6ff);
+  box-shadow: 0 0 15px rgba(0, 82, 255, 0.6);
+  position: relative;
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.4) 50%,
+      transparent 100%);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 /* Modals */

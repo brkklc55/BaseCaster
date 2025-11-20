@@ -1,18 +1,18 @@
 {
-    "accountAssociation": {
-        "header": "eyJmaWQiOjEzOTU5NjEsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHgzREYzYjFDNUE3N0ZmODVGRjI1NzI3RTU0Njg1YjE3MTcxQ0MyNTI2In0",
-        "payload": "eyJkb21haW4iOiJiYXNlLWNhc3Rlci1lYm9uLnZlcmNlbC5hcHAifQ",
-        "signature": "cf9RLkHVNfTg4f5PtZ3YmDLlMXCUATRR/VeqE9fHMZZqf9swzIy7jvjSwHSfejjXHT/0XRiw2oz0EHLH/2FQORw="
-    },
-    "frame": {
-        "version": "1",
-        "name": "Basecaster Tap2Earn",
-        "iconUrl": "https://base-caster-ebon.vercel.app/icon.png",
-        "homeUrl": "https://base-caster-ebon.vercel.app",
-        "imageUrl": "https://base-caster-ebon.vercel.app/og-image.png",
-        "buttonTitle": "Start Tapping",
-        "splashImageUrl": "https://base-caster-ebon.vercel.app/icon.png",
-        "splashBackgroundColor": "#0a0a0a",
-        "webhookUrl": "https://base-caster-ebon.vercel.app/api/webhook"
-    }
+  "accountAssociation": {
+    "header": "eyJmaWQiOjEzOTU5NjEsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHgzREYzYjFDNUE3N0ZmODVGRjI1NzI3RTU0Njg1YjE3MTcxQ0MyNTI2In0",
+    "payload": "eyJkb21haW4iOiJiYXNlLWNhc3Rlci1lYm9uLnZlcmNlbC5hcHAifQ",
+    "signature": "cf9RLkHVNfTg4f5PtZ3YmDLlMXCUATRR/VeqE9fHMZZqf9swzIy7jvjSwHSfejjXHT/0XRiw2oz0EHLH/2FQORw="
+  },
+  "frame": {
+    "version": "1",
+    "name": "Basecaster Tap2Earn",
+    "iconUrl": "https://base-caster-ebon.vercel.app/icon.png",
+    "homeUrl": "https://base-caster-ebon.vercel.app",
+    "imageUrl": "https://base-caster-ebon.vercel.app/og-image.png",
+    "buttonTitle": "Play Tap2Earn",
+    "splashImageUrl": "https://base-caster-ebon.vercel.app/icon.png",
+    "splashBackgroundColor": "#0a0a0a",
+    "webhookUrl": "https://base-caster-ebon.vercel.app/api/webhook"
+  }
 }
