@@ -18,7 +18,8 @@ export const Friends: React.FC<FriendsProps> = ({ onClose }) => {
     }, []);
 
     const baseUrl = 'https://base-caster-ebon.vercel.app';
-    const inviteLink = `https://warpcast.com/~/frames/launch?url=${encodeURIComponent(`${baseUrl}/?ref=${userId}`)}`;
+    const encodedUrl = encodeURIComponent(`${baseUrl}/?ref=${userId}`);
+    const inviteLink = `https://warpcast.com/~/frames/launch?url=${encodedUrl}&domain=base-caster-ebon.vercel.app`;
 
     const handleCopy = () => {
         navigator.clipboard.writeText(inviteLink);
