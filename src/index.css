@@ -511,27 +511,45 @@ h1 {
 /* Menu Buttons */
 .menu-buttons {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.8rem;
   width: 100%;
   margin-top: 0;
-  /* Handled by flex layout */
 }
 
 .menu-btn {
   flex: 1;
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  color: white;
-  padding: 0.8rem;
-  border-radius: 16px;
-  font-weight: bold;
+  background: rgba(0, 82, 255, 0.1);
+  border: 1px solid rgba(0, 82, 255, 0.3);
+  color: #4da6ff;
+  padding: 1rem 0.5rem;
+  border-radius: 20px;
+  font-weight: 700;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.menu-btn:hover {
+  background: rgba(0, 82, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 82, 255, 0.3);
+  border-color: rgba(0, 82, 255, 0.5);
+  color: white;
 }
 
 .menu-btn:active {
-  background: rgba(255, 255, 255, 0.2);
+  transform: scale(0.95);
+  background: rgba(0, 82, 255, 0.3);
+}
+
+.menu-btn span {
+  font-size: 1.2rem;
 }
 
 .buy-btn {

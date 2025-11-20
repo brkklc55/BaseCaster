@@ -50,36 +50,6 @@ function App() {
 
       <Stats score={score} energy={energy} maxEnergy={maxEnergy} />
 
-      {/* New score display and share button */}
-      <div className="score-display">
-        <img src="/icon.png" alt="Coin" style={{ width: '24px', height: '24px', marginRight: '8px', verticalAlign: 'middle' }} />
-        {Math.floor(score).toLocaleString()}
-      </div>
-
-      <button
-        onClick={() => {
-          const text = `I just reached ${Math.floor(score).toLocaleString()} points on Basecaster Tap2Earn! Can you beat me? 🚀`;
-          const url = `https://warpcast.com/~/compose?text=${encodeURIComponent(text)}&embeds[]=https://base-caster-ebon.vercel.app`;
-          window.open(url, '_blank');
-        }}
-        style={{
-          background: 'rgba(255, 255, 255, 0.1)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          color: 'white',
-          padding: '8px 16px',
-          borderRadius: '20px',
-          fontSize: '14px',
-          cursor: 'pointer',
-          marginBottom: '20px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          margin: '0 auto 20px auto'
-        }}
-      >
-        <span>📤</span> Share Progress
-      </button>
-
       <div className="game-area">
         <Clicker onClick={incrementScore} />
       </div>
