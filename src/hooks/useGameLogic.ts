@@ -5,6 +5,25 @@ const BASE_ENERGY = 1000;
 const REGEN_RATE = 1;
 const STORAGE_KEY = 'basecaster_save_v2';
 
+export interface MiningCard {
+    id: string;
+    name: string;
+    baseCost: number;
+    baseProfit: number;
+    level: number;
+    image: string;
+}
+
+const INITIAL_CARDS: MiningCard[] = [
+    { id: 'newbie', name: 'Newbie', baseCost: 500, baseProfit: 50, level: 0, image: '👶' },
+    { id: 'caster', name: 'Caster', baseCost: 1500, baseProfit: 120, level: 0, image: '🎙️' },
+    { id: 'reply_guy', name: 'Reply Guy', baseCost: 5000, baseProfit: 350, level: 0, image: '💬' },
+    { id: 'meme_creator', name: 'Meme Creator', baseCost: 15000, baseProfit: 900, level: 0, image: '🎨' },
+    { id: 'channel_host', name: 'Channel Host', baseCost: 50000, baseProfit: 2500, level: 0, image: '📺' },
+    { id: 'developer', name: 'Developer', baseCost: 200000, baseProfit: 8000, level: 0, image: '👨‍💻' },
+    { id: 'protocol_dev', name: 'Protocol Dev', baseCost: 1000000, baseProfit: 35000, level: 0, image: '🌐' },
+];
+
 interface GameState {
     score: number;
     totalScore: number;
@@ -14,6 +33,7 @@ interface GameState {
     lastSaveTime: number;
     username?: string | null;
     walletAddress?: string | null;
+    miningCards?: MiningCard[];
     // Legacy
     lastUpdated?: number;
 }
@@ -33,8 +53,15 @@ export const useGameLogic = () => {
     const [username, setUsername] = useState<string | null>(null);
     const [walletAddress, setWalletAddress] = useState<string | null>(null);
 
+    const [miningCards, setMiningCards] = useState<MiningCard[]>(INITIAL_CARDS);
+    const [offlineEarnings, setOfflineEarnings] = useState<number>(0);
+
     const maxEnergy = BASE_ENERGY + (energyLimitLevel * 500);
     const clickPower = 1 + multitapLevel * 2;
+
+    const profitPerHour = miningCards.reduce((total, card) => {
+        return total + (card.level * card.baseProfit);
+    }, 0);
 
     // Load game state
     useEffect(() => {
@@ -49,13 +76,35 @@ export const useGameLogic = () => {
                 setUsername(parsed.username || null);
                 setWalletAddress(parsed.walletAddress || null);
 
-                // Calculate offline energy regen
+                if (parsed.miningCards) {
+                    // Merge saved cards with initial cards to handle new additions
+                    const mergedCards = INITIAL_CARDS.map(initialCard => {
+                        const savedCard = parsed.miningCards?.find(c => c.id === initialCard.id);
+                        return savedCard || initialCard;
+                    });
+                    setMiningCards(mergedCards);
+                }
+
+                // Calculate offline energy regen & mining earnings
                 const lastTime = parsed.lastSaveTime || parsed.lastUpdated || Date.now();
-                const elapsedSeconds = (Date.now() - lastTime) / 1000;
+                const now = Date.now();
+                const elapsedSeconds = (now - lastTime) / 1000;
+
+                // Energy
                 const currentMaxEnergy = BASE_ENERGY + ((parsed.energyLimitLevel || 0) * 500);
                 const regenerated = elapsedSeconds * REGEN_RATE;
-
                 setEnergy(Math.min(currentMaxEnergy, (parsed.energy || 0) + regenerated));
+
+                // Mining Earnings (Max 3 hours)
+                const pph = (parsed.miningCards || []).reduce((total, card) => total + (card.level * card.baseProfit), 0);
+                if (pph > 0) {
+                    const earnedSeconds = Math.min(elapsedSeconds, 3 * 60 * 60); // Cap at 3 hours
+                    const earned = Math.floor((pph / 3600) * earnedSeconds);
+                    if (earned > 0) {
+                        setOfflineEarnings(earned);
+                    }
+                }
+
             } catch (e) {
                 console.error('Failed to load save', e);
             }
@@ -106,10 +155,11 @@ export const useGameLogic = () => {
             energyLimitLevel,
             username,
             walletAddress,
+            miningCards,
             lastSaveTime: Date.now(),
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }, [score, totalScore, energy, multitapLevel, energyLimitLevel, isLoaded, username, walletAddress]);
+    }, [score, totalScore, energy, multitapLevel, energyLimitLevel, isLoaded, username, walletAddress, miningCards]);
 
     const handleClick = useCallback(() => {
         if (energy >= clickPower) {
@@ -138,9 +188,38 @@ export const useGameLogic = () => {
         return false;
     };
 
+    const buyCard = (cardId: string) => {
+        const cardIndex = miningCards.findIndex(c => c.id === cardId);
+        if (cardIndex === -1) return false;
+
+        const card = miningCards[cardIndex];
+        // Cost formula: BaseCost * (1.15 ^ Level)
+        const cost = Math.floor(card.baseCost * Math.pow(1.15, card.level));
+
+        if (score >= cost) {
+            setScore(s => s - cost);
+
+            const newCards = [...miningCards];
+            newCards[cardIndex] = {
+                ...card,
+                level: card.level + 1
+            };
+            setMiningCards(newCards);
+            return true;
+        }
+        return false;
+    };
+
     const addReward = (amount: number) => {
         setScore(s => s + amount);
         setTotalScore(s => s + amount);
+    };
+
+    const claimOfflineEarnings = () => {
+        if (offlineEarnings > 0) {
+            addReward(offlineEarnings);
+            setOfflineEarnings(0);
+        }
     };
 
     const setProfile = (name: string, wallet: string) => {
@@ -209,8 +288,6 @@ export const useGameLogic = () => {
         const timeToFull = (maxEnergy - energy) / REGEN_RATE;
         const newTargetTime = Date.now() + (timeToFull * 1000);
 
-        // If target time is close to existing target (within 2 seconds), don't reset
-        // This prevents resetting the timer on every regen tick
         if (Math.abs(newTargetTime - targetTimeRef.current) < 2000) {
             return;
         }
@@ -241,9 +318,14 @@ export const useGameLogic = () => {
         clickPower,
         multitapLevel,
         energyLimitLevel,
+        miningCards,
+        profitPerHour,
+        offlineEarnings,
         incrementScore: handleClick,
         buyUpgrade,
+        buyCard,
         addReward,
+        claimOfflineEarnings,
         username,
         walletAddress,
         setProfile,

@@ -8,6 +8,7 @@ import { Leaderboard } from './components/Leaderboard';
 import { Tasks } from './components/Tasks';
 import { Friends } from './components/Friends';
 import { Welcome } from './components/Welcome';
+import { OfflineEarnings } from './components/OfflineEarnings';
 import sdk from '@farcaster/frame-sdk';
 
 function App() {
@@ -22,7 +23,12 @@ function App() {
     addReward,
     username,
     setProfile,
-    requestNotificationPermission
+    requestNotificationPermission,
+    miningCards,
+    profitPerHour,
+    buyCard,
+    offlineEarnings,
+    claimOfflineEarnings
   } = useGameLogic();
 
   useEffect(() => {
@@ -95,6 +101,9 @@ function App() {
           multitapLevel={multitapLevel}
           energyLimitLevel={energyLimitLevel}
           buyUpgrade={buyUpgrade}
+          miningCards={miningCards}
+          profitPerHour={profitPerHour}
+          buyCard={buyCard}
         />
       )}
 
@@ -115,6 +124,11 @@ function App() {
       {activeModal === 'referrals' && (
         <Friends onClose={() => setActiveModal(null)} />
       )}
+
+      <OfflineEarnings
+        earnings={offlineEarnings}
+        onClaim={claimOfflineEarnings}
+      />
     </div>
   );
 }
