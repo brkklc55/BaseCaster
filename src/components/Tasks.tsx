@@ -5,21 +5,22 @@ interface TasksProps {
     addReward: (amount: number) => void;
 }
 
-const DAILY_REWARD = 1000;
 const SOCIAL_REWARD = 5000;
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
 export const Tasks: React.FC<TasksProps> = ({ onClose, addReward }) => {
-    const [lastLogin, setLastLogin] = useState<number>(0);
     const [twitterStatus, setTwitterStatus] = useState<'initial' | 'verifying' | 'claimed'>('initial');
     const [farcasterStatus, setFarcasterStatus] = useState<'initial' | 'verifying' | 'claimed'>('initial');
     const [referralStatus, setReferralStatus] = useState<'initial' | 'verifying' | 'claimed'>('initial');
     const [verifying, setVerifying] = useState<string | null>(null);
 
-    useEffect(() => {
-        const storedLogin = localStorage.getItem('basecaster_last_login');
-        if (storedLogin) setLastLogin(parseInt(storedLogin));
+    const [streak, setStreak] = useState<number>(0);
+    const [lastClaimTime, setLastClaimTime] = useState<number>(0);
 
+    const STREAK_REWARDS = [500, 1000, 2500, 5000, 15000, 25000, 100000];
+
+    useEffect(() => {
+        // Load Social Tasks
         const storedTwitter = localStorage.getItem('basecaster_task_twitter');
         if (storedTwitter) {
             setTwitterStatus('claimed');
@@ -34,6 +35,7 @@ export const Tasks: React.FC<TasksProps> = ({ onClose, addReward }) => {
             setFarcasterStatus('verifying');
         }
 
+        // Load Referral Task
         const lastReferralShare = localStorage.getItem('basecaster_last_referral_share');
         if (lastReferralShare) {
             const lastShareTime = parseInt(lastReferralShare);
@@ -43,17 +45,48 @@ export const Tasks: React.FC<TasksProps> = ({ onClose, addReward }) => {
         } else if (localStorage.getItem('basecaster_task_referral_verifying')) {
             setReferralStatus('verifying');
         }
+
+        // Load Streak
+        const storedStreak = localStorage.getItem('basecaster_streak');
+        const storedLastClaim = localStorage.getItem('basecaster_last_streak_claim');
+
+        if (storedStreak) setStreak(parseInt(storedStreak));
+        if (storedLastClaim) setLastClaimTime(parseInt(storedLastClaim));
     }, []);
 
-    const canClaimDaily = Date.now() - lastLogin > ONE_DAY_MS;
+    const isStreakClaimable = () => {
+        if (lastClaimTime === 0) return true;
+        const now = Date.now();
+        const lastClaimDate = new Date(lastClaimTime).setHours(0, 0, 0, 0);
+        const today = new Date(now).setHours(0, 0, 0, 0);
+        return today > lastClaimDate;
+    };
 
-    const handleDailyClaim = () => {
-        if (canClaimDaily) {
-            addReward(DAILY_REWARD);
-            const now = Date.now();
-            setLastLogin(now);
-            localStorage.setItem('basecaster_last_login', now.toString());
+    const handleStreakClaim = () => {
+        if (!isStreakClaimable()) return;
+
+        const now = Date.now();
+        const lastClaimDate = new Date(lastClaimTime).setHours(0, 0, 0, 0);
+        const today = new Date(now).setHours(0, 0, 0, 0);
+        const yesterday = today - ONE_DAY_MS;
+
+        let newStreak = streak;
+
+        // If last claim was yesterday, increment. If older, reset.
+        if (lastClaimTime === 0 || lastClaimDate === yesterday) {
+            newStreak = Math.min(streak + 1, 7);
+        } else {
+            newStreak = 1;
         }
+
+        const reward = STREAK_REWARDS[newStreak - 1];
+        addReward(reward);
+
+        setStreak(newStreak);
+        setLastClaimTime(now);
+
+        localStorage.setItem('basecaster_streak', newStreak.toString());
+        localStorage.setItem('basecaster_last_streak_claim', now.toString());
     };
 
     const handleSocialClick = (platform: 'twitter' | 'farcaster' | 'referral') => {
@@ -66,7 +99,6 @@ export const Tasks: React.FC<TasksProps> = ({ onClose, addReward }) => {
             setFarcasterStatus('verifying');
             localStorage.setItem('basecaster_task_farcaster_verifying', 'true');
         } else {
-            // Referral Share
             const text = encodeURIComponent("Join me on Basecaster Tap2Earn! 🚀");
             const embed = encodeURIComponent("https://base-caster-ebon.vercel.app");
             window.open(`https://warpcast.com/~/compose?text=${text}&embeds[]=${embed}`, '_blank');
@@ -81,7 +113,7 @@ export const Tasks: React.FC<TasksProps> = ({ onClose, addReward }) => {
             setVerifying(null);
 
             if (platform === 'referral') {
-                addReward(DAILY_REWARD * 2); // 2000 coins for sharing
+                addReward(2000);
                 setReferralStatus('claimed');
                 localStorage.setItem('basecaster_last_referral_share', Date.now().toString());
                 localStorage.removeItem('basecaster_task_referral_verifying');
@@ -115,21 +147,68 @@ export const Tasks: React.FC<TasksProps> = ({ onClose, addReward }) => {
                     <button className="close-btn" onClick={onClose}>✕</button>
                 </div>
 
-                <div className="shop-list">
-                    <div className="shop-item" style={{ cursor: 'default' }}>
-                        <div className="item-icon">📅</div>
-                        <div className="item-details">
-                            <h3>Daily Login</h3>
-                            <p>Come back every day!</p>
-                        </div>
-                        <button
-                            className="buy-btn"
-                            disabled={!canClaimDaily}
-                            onClick={handleDailyClaim}
-                        >
-                            {canClaimDaily ? `+${DAILY_REWARD}` : 'Wait'}
-                        </button>
+                {/* Daily Streak Section */}
+                <div style={{ marginBottom: '2rem' }}>
+                    <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.1rem' }}>📅 Daily Rewards</h3>
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(4, 1fr)',
+                        gap: '0.5rem'
+                    }}>
+                        {STREAK_REWARDS.map((reward, index) => {
+                            const day = index + 1;
+
+                            let statusStyle = {
+                                background: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                opacity: 0.5
+                            };
+
+                            if (day <= streak) {
+                                statusStyle = {
+                                    background: 'rgba(0, 82, 255, 0.2)',
+                                    border: '1px solid #0052FF',
+                                    opacity: 1
+                                };
+                            }
+
+                            if (isStreakClaimable() && (day === streak + 1 || (streak === 7 && day === 7))) {
+                                statusStyle = {
+                                    background: 'rgba(255, 255, 255, 0.1)',
+                                    border: '1px solid white',
+                                    opacity: 1
+                                };
+                            }
+
+                            return (
+                                <div key={day} style={{
+                                    ...statusStyle,
+                                    padding: '0.5rem',
+                                    borderRadius: '8px',
+                                    textAlign: 'center',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    gap: '4px'
+                                }}>
+                                    <span style={{ fontSize: '0.7rem', color: '#888' }}>Day {day}</span>
+                                    <span style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>{(reward / 1000)}K</span>
+                                </div>
+                            );
+                        })}
                     </div>
+                    <button
+                        className="buy-btn"
+                        style={{ width: '100%', marginTop: '1rem', padding: '0.8rem' }}
+                        disabled={!isStreakClaimable()}
+                        onClick={handleStreakClaim}
+                    >
+                        {isStreakClaimable() ? 'Claim Daily Reward' : `Come back tomorrow`}
+                    </button>
+                </div>
+
+                <div className="shop-list">
+                    <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.1rem' }}>📋 Social Tasks</h3>
 
                     <div className="shop-item" style={{ cursor: 'default' }}>
                         <div className="item-icon">🐦</div>
