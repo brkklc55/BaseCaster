@@ -39,9 +39,14 @@ body {
 
 #root {
   width: 100%;
-  height: 100%;
+  height: 100vh;
+  /* Full viewport height */
   display: flex;
   justify-content: center;
+  align-items: center;
+  /* Center vertically */
+  background: #000;
+  /* Dark background outside app */
 }
 
 .app-container {
@@ -49,10 +54,6 @@ body {
   max-width: 480px;
   /* Mobile constraint */
   height: 100dvh;
-  max-height: 800px;
-  /* Reduced for better laptop fit */
-  margin: auto;
-  /* Center on PC */
 
   display: flex;
   flex-direction: column;
@@ -75,11 +76,18 @@ body {
 /* PC specific rounding */
 @media (min-width: 481px) {
   .app-container {
-    border-radius: 24px;
-    height: 90vh;
-    /* Use viewport height */
-    max-height: 800px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 420px;
+    /* Fixed phone width */
+    height: 800px;
+    /* Fixed phone height */
+    max-height: 90vh;
+    /* But don't overflow small screens */
+    border-radius: 32px;
+    /* Nicer rounding */
+    border: 8px solid #222;
+    /* Phone bezel effect */
+    box-shadow: 0 0 100px rgba(0, 82, 255, 0.2);
+    /* Glow */
   }
 
   body {
