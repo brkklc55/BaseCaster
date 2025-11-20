@@ -21,7 +21,8 @@ function App() {
     buyUpgrade,
     addReward,
     username,
-    setProfile
+    setProfile,
+    requestNotificationPermission
   } = useGameLogic();
 
   useEffect(() => {
@@ -44,8 +45,26 @@ function App() {
     <div className="app-container">
       <div className="header">
         <div className="profile-info">
-          <span className="username">{username}</span>
+          <span className="username">@{username || 'user'}</span>
         </div>
+        <button
+          onClick={requestNotificationPermission}
+          style={{
+            background: 'rgba(255, 255, 255, 0.1)',
+            border: 'none',
+            borderRadius: '50%',
+            width: '36px',
+            height: '36px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            marginLeft: 'auto'
+          }}
+          title="Enable Notifications"
+        >
+          🔔
+        </button>
       </div>
 
       <Stats score={score} energy={energy} maxEnergy={maxEnergy} />

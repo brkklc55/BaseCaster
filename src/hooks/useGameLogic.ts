@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '../supabaseClient';
 
 const BASE_ENERGY = 1000;
@@ -177,6 +177,62 @@ export const useGameLogic = () => {
         return () => clearInterval(interval);
     }, [username, totalScore]);
 
+    // Notification Logic
+    const requestNotificationPermission = async () => {
+        if (!('Notification' in window)) {
+            alert('This browser does not support desktop notification');
+            return;
+        }
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+            new Notification('Notifications enabled! 🚀', {
+                body: 'We will notify you when your energy is full.',
+                icon: '/icon.png'
+            });
+        }
+    };
+
+    const notificationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const targetTimeRef = useRef<number>(0);
+
+    useEffect(() => {
+        if (!('Notification' in window) || Notification.permission !== 'granted') return;
+
+        if (energy >= maxEnergy) {
+            if (notificationTimerRef.current) {
+                clearTimeout(notificationTimerRef.current);
+                notificationTimerRef.current = null;
+            }
+            return;
+        }
+
+        const timeToFull = (maxEnergy - energy) / REGEN_RATE;
+        const newTargetTime = Date.now() + (timeToFull * 1000);
+
+        // If target time is close to existing target (within 2 seconds), don't reset
+        // This prevents resetting the timer on every regen tick
+        if (Math.abs(newTargetTime - targetTimeRef.current) < 2000) {
+            return;
+        }
+
+        targetTimeRef.current = newTargetTime;
+        if (notificationTimerRef.current) clearTimeout(notificationTimerRef.current);
+
+        notificationTimerRef.current = setTimeout(() => {
+            new Notification('🔋 Energy Full!', {
+                body: 'Your energy is fully recharged. Come back and tap! ⚡',
+                icon: '/icon.png'
+            });
+            notificationTimerRef.current = null;
+        }, timeToFull * 1000);
+
+        return () => {
+            if (notificationTimerRef.current) {
+                clearTimeout(notificationTimerRef.current);
+            }
+        };
+    }, [energy, maxEnergy]);
+
     return {
         score,
         totalScore,
@@ -190,6 +246,7 @@ export const useGameLogic = () => {
         addReward,
         username,
         walletAddress,
-        setProfile
+        setProfile,
+        requestNotificationPermission
     };
 };
