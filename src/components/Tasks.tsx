@@ -20,10 +20,18 @@ export const Tasks: React.FC<TasksProps> = ({ onClose, addReward }) => {
         if (storedLogin) setLastLogin(parseInt(storedLogin));
 
         const storedTwitter = localStorage.getItem('basecaster_task_twitter');
-        if (storedTwitter) setTwitterStatus('claimed');
+        if (storedTwitter) {
+            setTwitterStatus('claimed');
+        } else if (localStorage.getItem('basecaster_task_twitter_verifying')) {
+            setTwitterStatus('verifying');
+        }
 
         const storedFarcaster = localStorage.getItem('basecaster_task_farcaster');
-        if (storedFarcaster) setFarcasterStatus('claimed');
+        if (storedFarcaster) {
+            setFarcasterStatus('claimed');
+        } else if (localStorage.getItem('basecaster_task_farcaster_verifying')) {
+            setFarcasterStatus('verifying');
+        }
     }, []);
 
     const canClaimDaily = Date.now() - lastLogin > ONE_DAY_MS;
@@ -41,9 +49,11 @@ export const Tasks: React.FC<TasksProps> = ({ onClose, addReward }) => {
         if (platform === 'twitter') {
             window.open('https://x.com/MPoopybuttho1e', '_blank');
             setTwitterStatus('verifying');
+            localStorage.setItem('basecaster_task_twitter_verifying', 'true');
         } else {
             window.open('https://warpcast.com/poopybuttho1e', '_blank');
             setFarcasterStatus('verifying');
+            localStorage.setItem('basecaster_task_farcaster_verifying', 'true');
         }
     };
 
@@ -55,9 +65,11 @@ export const Tasks: React.FC<TasksProps> = ({ onClose, addReward }) => {
             if (platform === 'twitter') {
                 setTwitterStatus('claimed');
                 localStorage.setItem('basecaster_task_twitter', 'true');
+                localStorage.removeItem('basecaster_task_twitter_verifying');
             } else {
                 setFarcasterStatus('claimed');
                 localStorage.setItem('basecaster_task_farcaster', 'true');
+                localStorage.removeItem('basecaster_task_farcaster_verifying');
             }
         }, 2000);
     };
