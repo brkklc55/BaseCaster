@@ -13,6 +13,7 @@ export const Tasks: React.FC<TasksProps> = ({ onClose, addReward }) => {
     const [lastLogin, setLastLogin] = useState<number>(0);
     const [twitterStatus, setTwitterStatus] = useState<'initial' | 'verifying' | 'claimed'>('initial');
     const [farcasterStatus, setFarcasterStatus] = useState<'initial' | 'verifying' | 'claimed'>('initial');
+    const [referralStatus, setReferralStatus] = useState<'initial' | 'verifying' | 'claimed'>('initial');
     const [verifying, setVerifying] = useState<string | null>(null);
 
     useEffect(() => {
@@ -32,6 +33,16 @@ export const Tasks: React.FC<TasksProps> = ({ onClose, addReward }) => {
         } else if (localStorage.getItem('basecaster_task_farcaster_verifying')) {
             setFarcasterStatus('verifying');
         }
+
+        const lastReferralShare = localStorage.getItem('basecaster_last_referral_share');
+        if (lastReferralShare) {
+            const lastShareTime = parseInt(lastReferralShare);
+            if (Date.now() - lastShareTime < ONE_DAY_MS) {
+                setReferralStatus('claimed');
+            }
+        } else if (localStorage.getItem('basecaster_task_referral_verifying')) {
+            setReferralStatus('verifying');
+        }
     }, []);
 
     const canClaimDaily = Date.now() - lastLogin > ONE_DAY_MS;
@@ -45,36 +56,51 @@ export const Tasks: React.FC<TasksProps> = ({ onClose, addReward }) => {
         }
     };
 
-    const handleSocialClick = (platform: 'twitter' | 'farcaster') => {
+    const handleSocialClick = (platform: 'twitter' | 'farcaster' | 'referral') => {
         if (platform === 'twitter') {
             window.open('https://x.com/MPoopybuttho1e', '_blank');
             setTwitterStatus('verifying');
             localStorage.setItem('basecaster_task_twitter_verifying', 'true');
-        } else {
+        } else if (platform === 'farcaster') {
             window.open('https://warpcast.com/poopybuttho1e', '_blank');
             setFarcasterStatus('verifying');
             localStorage.setItem('basecaster_task_farcaster_verifying', 'true');
+        } else {
+            // Referral Share
+            const text = encodeURIComponent("Join me on Basecaster Tap2Earn! 🚀");
+            const embed = encodeURIComponent("https://base-caster-ebon.vercel.app");
+            window.open(`https://warpcast.com/~/compose?text=${text}&embeds[]=${embed}`, '_blank');
+            setReferralStatus('verifying');
+            localStorage.setItem('basecaster_task_referral_verifying', 'true');
         }
     };
 
-    const handleVerify = (platform: 'twitter' | 'farcaster') => {
+    const handleVerify = (platform: 'twitter' | 'farcaster' | 'referral') => {
         setVerifying(platform);
         setTimeout(() => {
             setVerifying(null);
-            addReward(SOCIAL_REWARD);
-            if (platform === 'twitter') {
-                setTwitterStatus('claimed');
-                localStorage.setItem('basecaster_task_twitter', 'true');
-                localStorage.removeItem('basecaster_task_twitter_verifying');
+
+            if (platform === 'referral') {
+                addReward(DAILY_REWARD * 2); // 2000 coins for sharing
+                setReferralStatus('claimed');
+                localStorage.setItem('basecaster_last_referral_share', Date.now().toString());
+                localStorage.removeItem('basecaster_task_referral_verifying');
             } else {
-                setFarcasterStatus('claimed');
-                localStorage.setItem('basecaster_task_farcaster', 'true');
-                localStorage.removeItem('basecaster_task_farcaster_verifying');
+                addReward(SOCIAL_REWARD);
+                if (platform === 'twitter') {
+                    setTwitterStatus('claimed');
+                    localStorage.setItem('basecaster_task_twitter', 'true');
+                    localStorage.removeItem('basecaster_task_twitter_verifying');
+                } else {
+                    setFarcasterStatus('claimed');
+                    localStorage.setItem('basecaster_task_farcaster', 'true');
+                    localStorage.removeItem('basecaster_task_farcaster_verifying');
+                }
             }
         }, 2000);
     };
 
-    const getButtonContent = (status: 'initial' | 'verifying' | 'claimed', platform: 'twitter' | 'farcaster') => {
+    const getButtonContent = (status: 'initial' | 'verifying' | 'claimed', platform: 'twitter' | 'farcaster' | 'referral') => {
         if (status === 'claimed') return 'Done';
         if (verifying === platform) return 'Checking...';
         if (status === 'verifying') return 'Check';
@@ -134,6 +160,22 @@ export const Tasks: React.FC<TasksProps> = ({ onClose, addReward }) => {
                             style={farcasterStatus === 'verifying' ? { background: '#e6b800' } : {}}
                         >
                             {getButtonContent(farcasterStatus, 'farcaster')}
+                        </button>
+                    </div>
+
+                    <div className="shop-item" style={{ cursor: 'default' }}>
+                        <div className="item-icon">📢</div>
+                        <div className="item-details">
+                            <h3>Share Daily</h3>
+                            <p>Share referral link (+2000)</p>
+                        </div>
+                        <button
+                            className="buy-btn"
+                            disabled={referralStatus === 'claimed' || verifying === 'referral'}
+                            onClick={() => referralStatus === 'initial' ? handleSocialClick('referral') : handleVerify('referral')}
+                            style={referralStatus === 'verifying' ? { background: '#e6b800' } : {}}
+                        >
+                            {referralStatus === 'claimed' ? 'Done' : (referralStatus === 'verifying' ? (verifying === 'referral' ? 'Checking...' : 'Check') : '+2000')}
                         </button>
                     </div>
                 </div>
