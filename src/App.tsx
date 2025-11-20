@@ -25,6 +25,15 @@ function App() {
     setProfile
   } = useGameLogic();
 
+  useEffect(() => {
+    const load = async () => {
+      sdk.actions.ready();
+    };
+    if (sdk && sdk.actions) {
+      load();
+    }
+  }, []);
+
   const [activeModal, setActiveModal] = useState<'shop' | 'leaderboard' | 'tasks' | 'friends' | null>(null);
 
   // Show Welcome screen if no username
