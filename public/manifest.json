@@ -1,29 +1,16 @@
 {
-    "version": "next",
-    "imageUrl": "https://placehold.co/600x400/0052FF/ffffff.png?text=Basecaster",
+    "name": "Basecaster Tap2Earn",
+    "short_name": "Tap2Earn",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#0a0a0a",
+    "theme_color": "#0052FF",
+    "description": "Click, Earn, and Compete on Farcaster!",
     "icons": [
         {
-            "src": "https://placehold.co/512x512/0052FF/ffffff.png?text=BC",
-            "sizes": "512x512",
+            "src": "icon.png",
+            "sizes": "1024x1024",
             "type": "image/png"
         }
-    ],
-    "button": {
-        "title": "Play Basecaster",
-        "action": {
-            "type": "launch_frame",
-            "name": "Basecaster",
-            "url": "https://base-caster-ebon.vercel.app",
-            "splashImageUrl": "https://placehold.co/200x200/0052FF/ffffff.png?text=BC",
-            "splashBackgroundColor": "#0a0a0a"
-        }
-    },
-    "frame": {
-        "version": "1",
-        "name": "Basecaster",
-        "homeUrl": "https://base-caster-ebon.vercel.app",
-        "imageUrl": "https://placehold.co/600x400/0052FF/ffffff.png?text=Basecaster",
-        "buttonTitle": "Play Basecaster",
-        "splashImageUrl": "https://placehold.co/200x200/0052FF/ffffff.png?text=BC"
-    }
+    ]
 }
