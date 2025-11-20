@@ -1,6 +1,6 @@
 {
     "version": "next",
-    "imageUrl": "https://placehold.co/600x400/0052FF/ffffff?text=Basecaster",
+    "imageUrl": "https://placehold.co/600x400/0052FF/ffffff.png?text=Basecaster",
     "icons": [
         {
             "src": "/icon.svg",
@@ -22,7 +22,7 @@
         "version": "1",
         "name": "Basecaster",
         "homeUrl": "https://base-caster-ebon.vercel.app",
-        "imageUrl": "https://base-caster-ebon.vercel.app/og-image.svg",
+        "imageUrl": "https://placehold.co/600x400/0052FF/ffffff.png?text=Basecaster",
         "buttonTitle": "Play Basecaster",
         "splashImageUrl": "https://base-caster-ebon.vercel.app/icon.svg"
     }
