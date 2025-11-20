@@ -49,6 +49,8 @@ body {
   max-width: 480px;
   /* Mobile constraint */
   height: 100vh;
+  height: 100dvh;
+  /* Dynamic viewport height for mobile */
   display: flex;
   flex-direction: column;
   padding: 20px;

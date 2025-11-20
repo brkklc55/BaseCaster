@@ -17,7 +17,8 @@ export const Friends: React.FC<FriendsProps> = ({ onClose }) => {
         setUserId(storedId);
     }, []);
 
-    const inviteLink = `${window.location.origin}/?ref=${userId}`;
+    const baseUrl = 'https://base-caster-ebon.vercel.app';
+    const inviteLink = `https://warpcast.com/~/frames/launch?url=${encodeURIComponent(`${baseUrl}/?ref=${userId}`)}`;
 
     const handleCopy = () => {
         navigator.clipboard.writeText(inviteLink);
@@ -55,7 +56,7 @@ export const Friends: React.FC<FriendsProps> = ({ onClose }) => {
                             textOverflow: 'ellipsis',
                             whiteSpace: 'nowrap',
                             fontFamily: 'monospace',
-                            fontSize: '0.9rem',
+                            fontSize: '0.8rem',
                             color: '#4da6ff'
                         }}>
                             {inviteLink}
@@ -73,8 +74,9 @@ export const Friends: React.FC<FriendsProps> = ({ onClose }) => {
                         className="buy-btn"
                         style={{ width: '100%', padding: '1rem', fontSize: '1.1rem', background: '#855DCD' }}
                         onClick={() => {
-                            const text = `I'm earning $BC on Basecaster! Join me and get 10k bonus points! 🚀\n\n${inviteLink}`;
-                            window.open(`https://warpcast.com/~/compose?text=${encodeURIComponent(text)}`, '_blank');
+                            const text = `I'm earning $BC on Basecaster! Join me and get 10k bonus points! 🚀`;
+                            const shareUrl = `https://warpcast.com/~/compose?text=${encodeURIComponent(text)}&embeds[]=${encodeURIComponent(inviteLink)}`;
+                            window.open(shareUrl, '_blank');
                         }}
                     >
                         🟣 Cast on Farcaster

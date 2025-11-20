@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '../supabaseClient';
 
 const BASE_ENERGY = 1000;
 const REGEN_RATE = 1;
@@ -146,6 +147,35 @@ export const useGameLogic = () => {
         setUsername(name);
         setWalletAddress(wallet);
     };
+
+    // Supabase Sync
+    useEffect(() => {
+        if (!username) return;
+
+        const syncToSupabase = async () => {
+            let userId = localStorage.getItem('basecaster_user_id');
+            if (!userId) {
+                userId = Math.random().toString(36).substring(2, 15);
+                localStorage.setItem('basecaster_user_id', userId);
+            }
+
+            const { error } = await supabase
+                .from('users')
+                .upsert({
+                    id: userId,
+                    username: username,
+                    score: totalScore,
+                    updated_at: new Date().toISOString()
+                });
+
+            if (error) console.error('Supabase sync error:', error);
+        };
+
+        // Sync immediately on profile set, then every 10s
+        syncToSupabase();
+        const interval = setInterval(syncToSupabase, 10000);
+        return () => clearInterval(interval);
+    }, [username, totalScore]);
 
     return {
         score,

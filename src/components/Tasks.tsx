@@ -11,18 +11,19 @@ const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
 export const Tasks: React.FC<TasksProps> = ({ onClose, addReward }) => {
     const [lastLogin, setLastLogin] = useState<number>(0);
-    const [twitterClaimed, setTwitterClaimed] = useState(false);
-    const [farcasterClaimed, setFarcasterClaimed] = useState(false);
+    const [twitterStatus, setTwitterStatus] = useState<'initial' | 'verifying' | 'claimed'>('initial');
+    const [farcasterStatus, setFarcasterStatus] = useState<'initial' | 'verifying' | 'claimed'>('initial');
+    const [verifying, setVerifying] = useState<string | null>(null);
 
     useEffect(() => {
         const storedLogin = localStorage.getItem('basecaster_last_login');
         if (storedLogin) setLastLogin(parseInt(storedLogin));
 
         const storedTwitter = localStorage.getItem('basecaster_task_twitter');
-        if (storedTwitter) setTwitterClaimed(true);
+        if (storedTwitter) setTwitterStatus('claimed');
 
         const storedFarcaster = localStorage.getItem('basecaster_task_farcaster');
-        if (storedFarcaster) setFarcasterClaimed(true);
+        if (storedFarcaster) setFarcasterStatus('claimed');
     }, []);
 
     const canClaimDaily = Date.now() - lastLogin > ONE_DAY_MS;
@@ -36,26 +37,36 @@ export const Tasks: React.FC<TasksProps> = ({ onClose, addReward }) => {
         }
     };
 
-    const handleSocialClaim = (platform: 'twitter' | 'farcaster') => {
-        if (platform === 'twitter' && !twitterClaimed) {
+    const handleSocialClick = (platform: 'twitter' | 'farcaster') => {
+        if (platform === 'twitter') {
             window.open('https://x.com/MPoopybuttho1e', '_blank');
-            setTimeout(() => {
-                if (window.confirm('Did you follow @MPoopybuttho1e on Twitter?')) {
-                    addReward(SOCIAL_REWARD);
-                    setTwitterClaimed(true);
-                    localStorage.setItem('basecaster_task_twitter', 'true');
-                }
-            }, 1000);
-        } else if (platform === 'farcaster' && !farcasterClaimed) {
-            window.open('https://farcaster.xyz/poopybuttho1e', '_blank');
-            setTimeout(() => {
-                if (window.confirm('Did you follow @poopybuttho1e on Farcaster?')) {
-                    addReward(SOCIAL_REWARD);
-                    setFarcasterClaimed(true);
-                    localStorage.setItem('basecaster_task_farcaster', 'true');
-                }
-            }, 1000);
+            setTwitterStatus('verifying');
+        } else {
+            window.open('https://warpcast.com/poopybuttho1e', '_blank');
+            setFarcasterStatus('verifying');
         }
+    };
+
+    const handleVerify = (platform: 'twitter' | 'farcaster') => {
+        setVerifying(platform);
+        setTimeout(() => {
+            setVerifying(null);
+            addReward(SOCIAL_REWARD);
+            if (platform === 'twitter') {
+                setTwitterStatus('claimed');
+                localStorage.setItem('basecaster_task_twitter', 'true');
+            } else {
+                setFarcasterStatus('claimed');
+                localStorage.setItem('basecaster_task_farcaster', 'true');
+            }
+        }, 2000);
+    };
+
+    const getButtonContent = (status: 'initial' | 'verifying' | 'claimed', platform: 'twitter' | 'farcaster') => {
+        if (status === 'claimed') return 'Done';
+        if (verifying === platform) return 'Checking...';
+        if (status === 'verifying') return 'Check';
+        return `+${SOCIAL_REWARD}`;
     };
 
     return (
@@ -90,10 +101,11 @@ export const Tasks: React.FC<TasksProps> = ({ onClose, addReward }) => {
                         </div>
                         <button
                             className="buy-btn"
-                            disabled={twitterClaimed}
-                            onClick={() => handleSocialClaim('twitter')}
+                            disabled={twitterStatus === 'claimed' || verifying === 'twitter'}
+                            onClick={() => twitterStatus === 'initial' ? handleSocialClick('twitter') : handleVerify('twitter')}
+                            style={twitterStatus === 'verifying' ? { background: '#e6b800' } : {}}
                         >
-                            {twitterClaimed ? 'Done' : `+${SOCIAL_REWARD}`}
+                            {getButtonContent(twitterStatus, 'twitter')}
                         </button>
                     </div>
 
@@ -105,10 +117,11 @@ export const Tasks: React.FC<TasksProps> = ({ onClose, addReward }) => {
                         </div>
                         <button
                             className="buy-btn"
-                            disabled={farcasterClaimed}
-                            onClick={() => handleSocialClaim('farcaster')}
+                            disabled={farcasterStatus === 'claimed' || verifying === 'farcaster'}
+                            onClick={() => farcasterStatus === 'initial' ? handleSocialClick('farcaster') : handleVerify('farcaster')}
+                            style={farcasterStatus === 'verifying' ? { background: '#e6b800' } : {}}
                         >
-                            {farcasterClaimed ? 'Done' : `+${SOCIAL_REWARD}`}
+                            {getButtonContent(farcasterStatus, 'farcaster')}
                         </button>
                     </div>
                 </div>

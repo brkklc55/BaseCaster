@@ -13,7 +13,6 @@ import sdk from '@farcaster/frame-sdk';
 function App() {
   const {
     score,
-    totalScore,
     energy,
     maxEnergy,
     incrementScore,
@@ -75,7 +74,6 @@ function App() {
       {activeModal === 'leaderboard' && (
         <Leaderboard
           onClose={() => setActiveModal(null)}
-          currentScore={totalScore}
           username={username}
         />
       )}
