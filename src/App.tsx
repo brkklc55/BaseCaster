@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import { useGameLogic } from './hooks/useGameLogic';
 import { Stats } from './components/Stats';
@@ -8,6 +8,7 @@ import { Leaderboard } from './components/Leaderboard';
 import { Tasks } from './components/Tasks';
 import { Friends } from './components/Friends';
 import { Welcome } from './components/Welcome';
+import sdk from '@farcaster/frame-sdk';
 
 function App() {
   const {
