@@ -1,0 +1,12 @@
+{
+    "frame": {
+        "version": "1",
+        "name": "Basecaster",
+        "iconUrl": "https://placehold.co/512x512/0052FF/ffffff.png?text=BC",
+        "homeUrl": "https://base-caster-ebon.vercel.app",
+        "imageUrl": "https://placehold.co/600x400/0052FF/ffffff.png?text=Basecaster",
+        "buttonTitle": "Play Basecaster",
+        "splashImageUrl": "https://placehold.co/200x200/0052FF/ffffff.png?text=BC",
+        "splashBackgroundColor": "#0a0a0a"
+    }
+}
