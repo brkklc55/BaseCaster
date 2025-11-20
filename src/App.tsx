@@ -33,7 +33,7 @@ function App() {
     }
   }, []);
 
-  const [activeModal, setActiveModal] = useState<'shop' | 'leaderboard' | 'tasks' | 'friends' | null>(null);
+  const [activeModal, setActiveModal] = useState<'shop' | 'leaderboard' | 'tasks' | 'referrals' | null>(null);
 
   // Show Welcome screen if no username
   if (!username) {
@@ -54,11 +54,19 @@ function App() {
         <Clicker onClick={incrementScore} />
       </div>
 
-      <div className="menu-bar">
-        <button onClick={() => setActiveModal('shop')}>🛒 Shop</button>
-        <button onClick={() => setActiveModal('tasks')}>📋 Tasks</button>
-        <button onClick={() => setActiveModal('friends')}>👥 Friends</button>
-        <button onClick={() => setActiveModal('leaderboard')}>🏆 Rank</button>
+      <div className="menu-buttons">
+        <button className="menu-btn" onClick={() => setActiveModal('shop')}>
+          <span>🛒</span> Shop
+        </button>
+        <button className="menu-btn" onClick={() => setActiveModal('tasks')}>
+          <span>📋</span> Tasks
+        </button>
+        <button className="menu-btn" onClick={() => setActiveModal('referrals')}>
+          <span>👥</span> Referrals
+        </button>
+        <button className="menu-btn" onClick={() => setActiveModal('leaderboard')}>
+          <span>🏆</span> Rank
+        </button>
       </div>
 
       {activeModal === 'shop' && (
@@ -85,7 +93,7 @@ function App() {
         />
       )}
 
-      {activeModal === 'friends' && (
+      {activeModal === 'referrals' && (
         <Friends onClose={() => setActiveModal(null)} />
       )}
     </div>
