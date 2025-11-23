@@ -96,6 +96,9 @@ function App() {
         <button className="menu-btn" onClick={() => setActiveModal('referrals')}>
           <span>👥</span> Friends
         </button>
+        <button className="menu-btn" onClick={() => setActiveModal('leaderboard')}>
+          <span>🏆</span> Rank
+        </button>
         <button className="menu-btn" onClick={() => setActiveModal('airdrop')}>
           <span>🪂</span> Airdrop
         </button>
