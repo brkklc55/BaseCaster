@@ -72,7 +72,7 @@ export const Clicker: React.FC<ClickerProps> = ({ onClick }) => {
                 }}
             >
                 <div className="coin">
-                    $BC
+                    <div className="coin-logo" />
                 </div>
             </div>
 
