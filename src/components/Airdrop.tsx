@@ -1,19 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 interface AirdropProps {
     onClose: () => void;
 }
 
 export const Airdrop: React.FC<AirdropProps> = ({ onClose }) => {
-    const [walletConnected, setWalletConnected] = useState(false);
-
-    useEffect(() => {
-        const storedWallet = localStorage.getItem('basecaster_wallet');
-        if (storedWallet) {
-            setWalletConnected(true);
-        }
-    }, []);
-
     return (
         <div className="modal-overlay">
             <div className="modal-content">
@@ -34,7 +25,14 @@ export const Airdrop: React.FC<AirdropProps> = ({ onClose }) => {
                             boxShadow: '0 0 20px rgba(0, 82, 255, 0.5)'
                         }}
                     />
-                    <h3 style={{ fontSize: '1.5rem', marginBottom: '5px' }}>$BC Token</h3>
+                    <h3 style={{
+                        fontSize: '1.5rem',
+                        marginBottom: '5px',
+                        background: 'linear-gradient(to right, #fff, #4da6ff)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        fontFamily: '"Press Start 2P", cursive'
+                    }}>$BC Token</h3>
                     <p style={{ color: '#888', marginBottom: '20px' }}>Listing is on the way!</p>
 
                     <button
@@ -56,16 +54,14 @@ export const Airdrop: React.FC<AirdropProps> = ({ onClose }) => {
                 </div>
 
                 <div className="shop-list" style={{ marginTop: '20px' }}>
-                    <h3 style={{ fontSize: '1.1rem', marginBottom: '10px' }}>Tasks</h3>
-
                     <div className="shop-item" style={{ opacity: 0.7 }}>
                         <div className="item-icon">🔒</div>
                         <div className="item-details">
                             <h3>Connect Wallet</h3>
-                            <p>{walletConnected ? 'Completed' : 'Connect your TON/Base wallet'}</p>
+                            <p style={{ fontSize: '0.6rem', color: '#888' }}>Connect your TON/Base wallet</p>
                         </div>
-                        <div style={{ color: walletConnected ? '#00ff00' : '#888' }}>
-                            {walletConnected ? '✓' : 'Wait'}
+                        <div style={{ color: '#888' }}>
+                            Wait
                         </div>
                     </div>
 
@@ -73,7 +69,7 @@ export const Airdrop: React.FC<AirdropProps> = ({ onClose }) => {
                         <div className="item-icon">⏳</div>
                         <div className="item-details">
                             <h3>Listing Date</h3>
-                            <p>Coming Soon</p>
+                            <p style={{ fontSize: '0.6rem', color: '#888' }}>Coming Soon</p>
                         </div>
                     </div>
                 </div>

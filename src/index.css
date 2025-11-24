@@ -186,7 +186,7 @@ body {
 .coin {
   width: 100%;
   height: 100%;
-  background: var(--warning);
+  background: var(--primary);
   border: 8px solid #000;
   box-shadow:
     inset -16px -16px 0px rgba(0, 0, 0, 0.2),
@@ -222,7 +222,7 @@ body {
 .coin-logo::after {
   content: 'BC';
   font-size: 3rem;
-  color: var(--warning);
+  color: var(--primary);
 }
 
 /* Floating Numbers */
