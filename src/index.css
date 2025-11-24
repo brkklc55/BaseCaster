@@ -87,8 +87,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
-  margin-bottom: 1rem;
+  padding: 4px 0;
+  margin-bottom: 0.5rem;
 }
 
 .profile-info {
@@ -113,8 +113,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .score-display {
@@ -171,8 +171,8 @@ body {
 }
 
 .clicker-container {
-  width: 200px;
-  height: 200px;
+  width: 160px;
+  height: 160px;
   position: relative;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
