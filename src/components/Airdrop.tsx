@@ -58,7 +58,7 @@ export const Airdrop: React.FC<AirdropProps> = ({ onClose }) => {
                         <div className="item-icon">🔒</div>
                         <div className="item-details">
                             <h3>Connect Wallet</h3>
-                            <p style={{ fontSize: '0.6rem', color: '#888' }}>Connect your TON/Base wallet</p>
+                            <p style={{ fontSize: '0.6rem', color: '#888' }}>Connect your Base wallet</p>
                         </div>
                         <div style={{ color: '#888' }}>
                             Wait

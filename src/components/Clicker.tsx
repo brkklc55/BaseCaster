@@ -71,9 +71,18 @@ export const Clicker: React.FC<ClickerProps> = ({ onClick }) => {
                     transition: 'transform 0.1s ease-out'
                 }}
             >
-                <div className="coin">
-                    <div className="coin-logo" />
-                </div>
+                <img
+                    src="/icon.png"
+                    alt="Clicker"
+                    className="coin-image"
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                        borderRadius: '50%',
+                        boxShadow: '0 0 30px rgba(0, 82, 255, 0.6)',
+                        pointerEvents: 'none'
+                    }}
+                />
             </div>
 
             {clicks.map(click => (
