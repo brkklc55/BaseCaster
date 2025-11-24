@@ -247,7 +247,6 @@ export const useGameLogic = () => {
                     id: userId,
                     username: username,
                     score: totalScore,
-                    referred_by: localStorage.getItem('basecaster_referred_by'),
                     updated_at: new Date().toISOString()
                 });
 
