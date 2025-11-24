@@ -189,6 +189,8 @@ export const useGameLogic = () => {
         return false;
     };
 
+
+
     const buyCard = (cardId: string) => {
         const cardIndex = miningCards.findIndex(c => c.id === cardId);
         if (cardIndex === -1) return false;
