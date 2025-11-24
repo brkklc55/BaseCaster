@@ -55,7 +55,7 @@ export const SplashScreen: React.FC<{ onComplete: () => void }> = ({ onComplete 
                 WebkitTextFillColor: 'transparent',
                 margin: 0,
                 fontFamily: '"Press Start 2P", cursive'
-            }}>Basecaster Retro</h1>
+            }}>Basecaster</h1>
             <p style={{ color: '#666', marginTop: '1rem' }}>Tap. Earn. Build.</p>
         </div>
     );
