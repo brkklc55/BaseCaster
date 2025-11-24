@@ -119,6 +119,7 @@ export const useGameLogic = () => {
             setScore(s => s + 10000);
             setTotalScore(s => s + 10000);
             localStorage.setItem('basecaster_ref_claimed', 'true');
+            localStorage.setItem('basecaster_referred_by', refId);
             window.history.replaceState({}, '', window.location.pathname);
             alert("🎉 Welcome! You received 10,000 $BC referral bonus!");
         }
@@ -244,6 +245,7 @@ export const useGameLogic = () => {
                     id: userId,
                     username: username,
                     score: totalScore,
+                    referred_by: localStorage.getItem('basecaster_referred_by'),
                     updated_at: new Date().toISOString()
                 });
 

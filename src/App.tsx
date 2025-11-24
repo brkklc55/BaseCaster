@@ -132,7 +132,10 @@ function App() {
       )}
 
       {activeModal === 'referrals' && (
-        <Friends onClose={() => setActiveModal(null)} />
+        <Friends
+          onClose={() => setActiveModal(null)}
+          addReward={addReward}
+        />
       )}
 
       {activeModal === 'airdrop' && (
