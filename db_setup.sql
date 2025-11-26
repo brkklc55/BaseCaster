@@ -27,3 +27,28 @@ using (true);
 
 -- Create a realtime publication so we can listen to changes (optional but cool)
 alter publication supabase_realtime add table public.users;
+
+-- Create the pixels table for NotPixel game
+create table public.pixels (
+  id integer primary key,
+  color text not null
+);
+
+-- Enable Row Level Security (RLS)
+alter table public.pixels enable row level security;
+
+-- Create policies for pixels
+create policy "Enable read access for all users"
+on public.pixels for select
+using (true);
+
+create policy "Enable insert for all users"
+on public.pixels for insert
+with check (true);
+
+create policy "Enable update for all users"
+on public.pixels for update
+using (true);
+
+-- Enable realtime for pixels
+alter publication supabase_realtime add table public.pixels;

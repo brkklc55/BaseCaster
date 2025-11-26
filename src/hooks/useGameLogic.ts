@@ -172,6 +172,14 @@ export const useGameLogic = () => {
         return false;
     }, [energy, clickPower]);
 
+    const consumeEnergy = (amount: number) => {
+        if (energy >= amount) {
+            setEnergy(e => e - amount);
+            return true;
+        }
+        return false;
+    };
+
     const buyUpgrade = (type: 'multitap' | 'energyLimit') => {
         const cost = type === 'multitap'
             ? UPGRADE_COSTS.multitap(multitapLevel)
@@ -332,6 +340,7 @@ export const useGameLogic = () => {
         username,
         walletAddress,
         setProfile,
-        requestNotificationPermission
+        requestNotificationPermission,
+        consumeEnergy
     };
 };

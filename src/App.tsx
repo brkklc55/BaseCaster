@@ -10,6 +10,9 @@ import { Welcome } from './components/Welcome';
 import { OfflineEarnings } from './components/OfflineEarnings';
 import { Airdrop } from './components/Airdrop';
 import { SplashScreen } from './components/SplashScreen';
+import { MiniGamesMenu } from './components/games/MiniGamesMenu';
+import { PredictionGame } from './components/games/PredictionGame';
+import { NotPixelGame } from './components/games/NotPixelGame';
 import sdk from '@farcaster/frame-sdk';
 
 function App() {
@@ -29,11 +32,12 @@ function App() {
     profitPerHour,
     buyCard,
     offlineEarnings,
-    claimOfflineEarnings
+    claimOfflineEarnings,
+    consumeEnergy
   } = useGameLogic();
 
   const [isLoading, setIsLoading] = useState(true);
-  const [activeModal, setActiveModal] = useState<'shop' | 'leaderboard' | 'tasks' | 'referrals' | 'airdrop' | null>(null);
+  const [activeModal, setActiveModal] = useState<'shop' | 'leaderboard' | 'tasks' | 'referrals' | 'airdrop' | 'games' | 'prediction' | 'notpixel' | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -58,7 +62,7 @@ function App() {
       <div className="header">
         <div className="profile-info">
           <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'linear-gradient(135deg, #0052FF, #4da6ff)' }} />
-          <span className="username">@{username || 'user'}</span>
+          <span className="username">@{username || 'user'} (v1.1)</span>
         </div>
         <button
           onClick={requestNotificationPermission}
@@ -102,6 +106,9 @@ function App() {
         <button className="menu-btn" onClick={() => setActiveModal('airdrop')}>
           <span>🪂</span> Airdrop
         </button>
+        <button className="menu-btn" onClick={() => setActiveModal('games')}>
+          <span>🎮</span> Games
+        </button>
       </div>
 
       {activeModal === 'shop' && (
@@ -140,6 +147,30 @@ function App() {
 
       {activeModal === 'airdrop' && (
         <Airdrop onClose={() => setActiveModal(null)} />
+      )}
+
+      {activeModal === 'games' && (
+        <MiniGamesMenu
+          onClose={() => setActiveModal(null)}
+          onSelectGame={(game) => setActiveModal(game)}
+        />
+      )}
+
+      {activeModal === 'prediction' && (
+        <PredictionGame
+          onClose={() => setActiveModal(null)}
+          score={score}
+          onUpdateScore={addReward}
+        />
+      )}
+
+      {activeModal === 'notpixel' && (
+        <NotPixelGame
+          onClose={() => setActiveModal(null)}
+          energy={energy}
+          onConsumeEnergy={consumeEnergy}
+          onReward={addReward}
+        />
       )}
 
       <OfflineEarnings
